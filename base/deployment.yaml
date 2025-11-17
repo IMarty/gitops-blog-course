@@ -2,11 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: blog
-  namespace: demo-blog
-  labels:
-    app: blog
 spec:
-  replicas: 2
+  replicas: 1  # Valeur par défaut, sera overridée
   selector:
     matchLabels:
       app: blog
@@ -20,17 +17,9 @@ spec:
         image: nginx:1.25-alpine
         ports:
         - containerPort: 80
-        env:
-        - name: BLOG_TITLE
-          valueFrom:
-            configMapKeyRef:
-              name: blog-config
-              key: BLOG_TITLE
-        - name: BLOG_SUBTITLE
-          valueFrom:
-            configMapKeyRef:
-              name: blog-config
-              key: BLOG_SUBTITLE
+        envFrom:
+        - configMapRef:
+            name: blog-config
         resources:
           requests:
             memory: "64Mi"
